@@ -1,3 +1,2 @@
-var clientDb = require('./db')
-exports.db = new clientDb()
-exports.socket = io.connect(window.location.host)
+exports.db = require('./db')
+exports.socket = require('./socket')

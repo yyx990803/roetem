@@ -101,9 +101,32 @@ p._initApp = function () {
 
   var self = this
   var db = this.db
+  var dbConn = this.dbConnection
   var app = this._app = express()
   var server = this._server = new http.Server(app)
   var io = this._io = sio(server)
+
+  // global hash of subscriptions, shared across multiple
+  // connections
+  var subscriptions = {}
+
+  function unsubQuery (id, socket) {
+    var sub = subscriptions[id]
+    if (sub) {
+      sub.sockets.splice(sub.sockets.indexOf(socket), 1)
+      if (!sub.sockets.length) {
+        subscriptions[id] = null
+        if (sub.cursor) {
+          sub.cursor.close()
+        } else {
+          // in the rare case if a socket is closed before
+          // the subscription is setup, we still need to close
+          // the cursor.
+          sub.cancelled = true
+        }
+      }
+    }
+  }
 
   // realtime stuff
   io.on('connection', function (socket) {
@@ -113,16 +136,71 @@ p._initApp = function () {
       socket.emit('reload')
     }
 
+    // subscription identifiers for this connection
+    var connectionSubIds = []
+
     socket.on('subscribe', function (query) {
-      
+      connectionSubIds.push(query.id)
+      var table = db.table(query.tableName)
+
+      // send initial full data
+      table.run(dbConn, function (err, cursor) {
+        if (err) throw err
+        cursor.toArray(function (err, res) {
+          if (err) throw err
+          socket.emit('subscription-confirmed', {
+            id: query.id,
+            data: res
+          })
+        })
+      })
+
+      // setup change feed subscription
+      var sub = subscriptions[query.id]
+      if (sub) {
+        sub.sockets.push(socket)
+      } else {
+        sub = subscriptions[query.id] = {
+          cursor: null,
+          sockets: [socket]
+        }
+        table.changes().run(dbConn, function (err, cursor) {
+          if (err) throw err
+          // socket closed before change cursor is setup
+          if (sub.cancelled) {
+            cursor.close()
+            return
+          }
+          sub.cursor = cursor
+          cursor.each(function (err, change) {
+            if (err) throw err
+            var type = change.new_val
+              ? change.old_val
+                ? 'update'
+                : 'insert'
+              : 'delete'
+            sub.sockets.forEach(function (s) {
+              s.emit('subscription-updated', {
+                id: query.id,
+                type: type,
+                data: change
+              })
+            })
+          })
+        })
+      }
     })
 
     socket.on('unsubscribe', function (query) {
-      
+      connectionSubIds.splice(connectionSubIds.indexOf(query), 1)
+      unsubQuery(query.id, socket)
     })
 
-    socket.on('disconnect', function () {
+    socket.once('disconnect', function () {
       self.removeListener('client-reload', reload)
+      connectionSubIds.forEach(function (id) {
+        unsubQuery(id, socket)
+      })
     })
 
   })

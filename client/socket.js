@@ -1,0 +1,1 @@
+module.exports = io.connect(window.location.host)
