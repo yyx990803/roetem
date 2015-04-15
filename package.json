@@ -1,7 +1,7 @@
 {
-  "name": "rev",
+  "name": "roetem",
   "version": "1.0.0",
-  "description": "meteor-like framework with vue and rethinkdb",
+  "description": "meteor-like experiment with vue and rethinkdb",
   "main": "index.js",
   "browser": "client/api.js",
   "scripts": {

@@ -4,7 +4,7 @@ var buildClient = require('./lib/build')
 var initDb = require('./lib/db')
 var initApp = require('./lib/app')
 
-function Rev (opts) {
+function Roetem (opts) {
   Emitter.call(this)
   this._opts = opts || {}
   var app = this
@@ -21,8 +21,8 @@ function Rev (opts) {
   )
 }
 
-Rev.prototype = Object.create(Emitter.prototype)
+Roetem.prototype = Object.create(Emitter.prototype)
 
 module.exports = function (opts) {
-  return new Rev(opts)
+  return new Roetem(opts)
 }
