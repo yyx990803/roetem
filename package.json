@@ -14,6 +14,7 @@
   "author": "Evan You",
   "license": "MIT",
   "dependencies": {
+    "async": "^0.9.0",
     "browserify": "^9.0.8",
     "express": "^4.12.3",
     "insert-css": "^0.2.0",
