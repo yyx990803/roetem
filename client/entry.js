@@ -4,7 +4,7 @@ require('roetem/client/vue-extension')(Vue)
 
 // boot up interface
 var indexOptions = require('./client/index.vue')
-new Vue(indexOptions).$mount('#app')
+window.app = new Vue(indexOptions).$mount('#app')
 
 // auto reload
 var socket = require('roetem/client/socket')

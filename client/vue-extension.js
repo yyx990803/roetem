@@ -7,10 +7,16 @@ module.exports = function (Vue) {
   p._init = function (opts) {
     init.call(this, opts)
     this._syncDict = {}
-    if (opts.queries) {
-      for (var key in opts.queries) {
-        this.$sync(key, opts.queries[key])
+    var queries = this.$options.queries
+    if (queries) {
+      for (var key in queries) {
+        this.$sync(key, queries[key])
       }
+      this.$on('hook:destroyed', function () {
+        for (var key in queries) {
+          this.$unsync(key, queries[key])
+        }
+      })
     }
   }
 
