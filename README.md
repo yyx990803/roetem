@@ -13,7 +13,12 @@
 
 ``` js
 // app.js
-require('roetem')()
+require('roetem')({
+  // options are optional
+  dbHost: 'localhost',
+  dbPort: 25108,
+  tables: ['items']
+})
 ```
 
 ``` html
@@ -43,8 +48,7 @@ module.exports = {
 ```
 
 ``` bash
-# start rethinkdb first
-node app.js
+$ rethinkdb & node app.js
 
 > building client assets...
 > done.
