@@ -15,13 +15,22 @@ r.subscribe = function (query, cb) {
     }
   }
 
-  // return handle
-  return {
+  var handle = {
     stop: function () {
-      socket.emit('unsubscribe', query)
+      socket.emit('unsubscribe', queryString)
       socket.removeListener('subscription-updated', handler)
     }
   }
+
+  socket.once('subscription-failed', function (e) {
+    if (e.id === queryString) {
+      console.warn('Subscription failed: ' + e.msg)
+      handle.stop()
+    }
+  })
+
+  // return handle
+  return handle
 }
 
 module.exports = r

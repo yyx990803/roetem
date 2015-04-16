@@ -8,21 +8,28 @@
 .
 ├── app.js
 └── client
-    └── index.vue
+    └── main.js
+    └── components
+        └── index.vue
 ```
 
 ``` js
 // app.js
-require('roetem')({
-  // options are optional
-  dbHost: 'localhost',
-  dbPort: 25108,
-  tables: ['items']
+require('roetem').createApp({
+  // default options
+  // dbHost: 'localhost',
+  // dbPort: 25108
 })
 ```
 
+``` js
+// client/main.js
+var rootComponent = require('./components/index.vue')
+require('roetem').render(rootComponent, '#app')
+```
+
 ``` html
-// client/index.vue
+// client/components/index.vue
 <template>
   <h1>{{msg}}</h1>
   <h2>A list</h2>
