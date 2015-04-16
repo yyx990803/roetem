@@ -23,7 +23,7 @@ module.exports = function (Vue) {
   p.$sync = function (key, fn) {
     var self = this
     this.$unsync(key)
-    this._syncDict[key] = db.trackQuery(fn, function (e) {
+    this._syncDict[key] = db.subscribe(fn, function (e) {
       var arr = self.$get(key)
       switch (e.type) {
         case 'insert':
