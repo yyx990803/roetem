@@ -1,8 +1,9 @@
 var r = require('./ast')
 var serialize = require('./errors').printQuery
-var socket = require('../socket')
+var api = require('../api')
 
 r.subscribe = function (query, cb) {
+  var socket = api.socket
   var queryString = serialize(query)
   socket.emit('subscribe', queryString)
   socket.once('subscription-confirmed', handler)

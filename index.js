@@ -23,6 +23,6 @@ function Roetem (opts) {
 
 Roetem.prototype = Object.create(Emitter.prototype)
 
-module.exports = function (opts) {
+exports.createApp = function (opts) {
   return new Roetem(opts)
 }
