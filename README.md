@@ -39,9 +39,8 @@ module.exports = {
     msg: 'Hello Roetem!'
   },
   queries: {
-    items: function () {
-      return db.table('items')
-    }
+    // realtime reactive RQL queries
+    items: db.table('items').filter({text: 'lol'})
   }
 }
 </script>
