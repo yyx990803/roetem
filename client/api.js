@@ -6,7 +6,7 @@ require('./vue-extension')(Vue)
 exports.db = require('./db')
 
 // socket
-var socket = exports.socket = io.connect(window.location.host)
+var socket = exports.socket = require('./socket')
 socket.on('reload', function () {
   window.location.reload()
 })
