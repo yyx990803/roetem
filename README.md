@@ -2,7 +2,12 @@
 
 > Meteor-like experiment using Vue + RethinkDB
 
+**NOTE**: This is just an experiment.
+
 ### Example
+
+- Install RethinkDB
+- `npm install yyx990803/roetem`
 
 ```
 .
